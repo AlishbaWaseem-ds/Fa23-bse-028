@@ -6,3 +6,4 @@ data/
 test-report.json
 received_reports/
 .DS_Store
+static_demo/colors.css

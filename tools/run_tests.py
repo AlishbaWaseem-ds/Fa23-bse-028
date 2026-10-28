@@ -68,6 +68,10 @@ class RecordingResult(unittest.TextTestResult):
         super().addSkip(test, reason)
         self._record(test, "skipped", reason=reason)
 
+    def addExpectedFailure(self, test, err):
+        super().addExpectedFailure(test, err)
+        self._record(test, "passed", reason="Expected failure")
+
     def addUnexpectedSuccess(self, test):
         super().addUnexpectedSuccess(test)
         self._record(test, "failed", reason="Unexpected success")

@@ -85,6 +85,7 @@ jobs:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pages: write
       id-token: write
     concurrency:
@@ -99,6 +100,10 @@ jobs:
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
+
+      # The demo uses the same colours file as the portal (static/colors.css).
+      - name: Add shared colours to the demo
+        run: cp static/colors.css static_demo/colors.css
 
       - name: Upload static demo
         uses: actions/upload-pages-artifact@v3

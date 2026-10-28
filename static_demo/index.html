@@ -4,25 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Assignment Submission Portal - Demo</title>
+  <!-- colors.css is copied here from static/colors.css by the CI deploy job -->
+  <link rel="stylesheet" href="colors.css">
   <style>
-    :root { --bg:#f4f6fb; --card:#fff; --ink:#1d2433; --muted:#667085; --brand:#2f5bea; --err:#b42318; --errbg:#fef3f2; --ok:#067647; --okbg:#ecfdf3; --line:#e4e7ec; }
     * { box-sizing: border-box; }
     body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--ink); }
-    header { background:var(--brand); color:#fff; padding:22px 16px; text-align:center; }
+    header { background:var(--brand); color:var(--on-brand); padding:22px 16px; text-align:center; }
     header h1 { margin:0; font-size:1.5rem; }
     header p { margin:6px 0 0; opacity:.9; }
-    .demo { background:#fff7e6; color:#7a4b00; border-bottom:1px solid #ffd591; padding:8px 16px; text-align:center; font-size:.9rem; }
+    .demo { background:var(--demo-bg); color:var(--demo-ink); border-bottom:1px solid var(--demo-border); padding:8px 16px; text-align:center; font-size:.9rem; }
     main { max-width:900px; margin:24px auto; padding:0 16px; display:grid; gap:20px; }
     section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px; }
     h2 { margin-top:0; font-size:1.1rem; }
     label { display:block; font-weight:600; margin:14px 0 6px; }
-    input[type=text] { width:100%; padding:10px 12px; border:1px solid #cfd4dc; border-radius:8px; font-size:1rem; }
+    input[type=text] { width:100%; padding:10px 12px; border:1px solid var(--input-border); border-radius:8px; font-size:1rem; }
     input.invalid { border-color:var(--err); }
     .alert { padding:12px 14px; border-radius:8px; margin-bottom:10px; }
-    .alert.error { background:var(--errbg); color:var(--err); border:1px solid #fecdca; }
-    .alert.success { background:var(--okbg); color:var(--ok); border:1px solid #abefc6; }
+    .alert.error { background:var(--errbg); color:var(--err); border:1px solid var(--err-border); }
+    .alert.success { background:var(--okbg); color:var(--ok); border:1px solid var(--ok-border); }
     .hidden { display:none; }
-    button { margin-top:18px; background:var(--brand); color:#fff; border:0; border-radius:8px; padding:11px 22px; font-size:1rem; cursor:pointer; }
+    button { margin-top:18px; background:var(--brand); color:var(--on-brand); border:0; border-radius:8px; padding:11px 22px; font-size:1rem; cursor:pointer; }
     table { width:100%; border-collapse:collapse; font-size:.95rem; }
     th, td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); vertical-align:top; word-break:break-word; }
     th { color:var(--muted); font-weight:600; }
@@ -83,6 +84,8 @@
     // Same rules as validation.py in the real portal
     function isValidUrl(value) {
       if (!value || /\s/.test(value)) return false;
+      // new URL() accepts "http:example.com"; Python's urlparse does not, so require "//"
+      if (!/^https?:\/\//i.test(value)) return false;
       var u;
       try { u = new URL(value); } catch (e) { return false; }
       if (u.protocol !== "http:" && u.protocol !== "https:") return false;

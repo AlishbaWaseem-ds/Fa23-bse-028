@@ -32,7 +32,7 @@ class SubmissionPortalTests(unittest.TestCase):
     def test_valid_submission_is_saved_and_listed(self):
         """Complete details and a valid URL: submission is saved and appears in the list."""
         response = self.client.post("/submit", data=VALID_FORM, follow_redirects=True)
-       // self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         saved = self.saved()
         self.assertEqual(len(saved), 1, "Exactly one submission should be saved")

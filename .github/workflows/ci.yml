@@ -64,7 +64,7 @@ jobs:
       - name: Send report to the local receiver
         env:
           RECEIVER_URL: ${{ secrets.RECEIVER_URL }}
-          RECEIVER_TOKEN: ${{ secrets.RECEIVER_TOKEN }}
+          RECEIVER_TOKEN: ${{ secrets.RECEIVER_TOKEN || secrets.REPORT_TOKEN }}
         run: python tools/send_report.py test-report.json
 
       # BONUS: e-mail the report. Skipped automatically when secrets are not set.

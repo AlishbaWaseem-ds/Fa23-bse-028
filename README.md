@@ -94,7 +94,7 @@ On every push to any branch:
 | Secret | Purpose |
 |--------|---------|
 | `RECEIVER_URL` | public (tunnel) or local URL of the receiver, ending in `/report` |
-| `RECEIVER_TOKEN` | optional shared token (must match the receiver's `RECEIVER_TOKEN`) |
+| `RECEIVER_TOKEN` (or `REPORT_TOKEN`) | optional shared token (must match the receiver's `RECEIVER_TOKEN` env variable) |
 | `EMAIL_TO` | (bonus) address that receives the report |
 | `SMTP_USERNAME` / `SMTP_PASSWORD` | (bonus) SMTP login - for Gmail use an *App Password* |
 | `SMTP_HOST` / `SMTP_PORT` | optional, default `smtp.gmail.com` / `587` |

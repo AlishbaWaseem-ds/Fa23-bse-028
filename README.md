@@ -7,6 +7,7 @@ the CI test report as `test-report.json`.
 ```
 app.py / validation.py / storage.py   the portal (Flask + JSON file storage)
 templates/index.html                  the web page
+static/colors.css                     all colours (shared by the portal and the static demo)
 tests/test_submissions.py             automated tests (unittest)
 tools/run_tests.py                    runs the tests and writes the JSON report
 tools/send_report.py                  CI -> POST report to the local receiver
@@ -27,7 +28,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-Open <http://127.0.0.1:8080>. Submissions are stored in `data/submissions.json`.
+Open <http://127.0.0.1:5001>. Submissions are stored in `data/submissions.json`.
 (Change the port with the `PORT` environment variable.)
 
 ## 2. Run the automated tests
@@ -71,6 +72,11 @@ ngrok http 8000            # or: cloudflared tunnel --url http://localhost:8000
 
 Put the public URL + `/report` into the `RECEIVER_URL` secret, e.g. `https://abcd.ngrok-free.app/report`.
 
+> A quick tunnel (`cloudflared tunnel --url ...` or ngrok without a static domain) gets a **new URL
+> every time it starts**. After restarting it, update the `RECEIVER_URL` secret. Cloudflare error
+> `530 / 1033` in the CI log means the tunnel behind the URL is not running. ngrok's free static
+> domain (`ngrok http --url=<your-domain> 8000`) keeps the same URL between restarts.
+
 **B. Local runner** - install a GitHub *self-hosted runner* on your PC
 (Settings -> Actions -> Runners -> New self-hosted runner), start it, create the repository
 variable `CI_RUNNER` = `self-hosted` and set `RECEIVER_URL` = `http://localhost:8000/report`.
@@ -88,10 +94,24 @@ On every push to any branch:
 | Secret | Purpose |
 |--------|---------|
 | `RECEIVER_URL` | public (tunnel) or local URL of the receiver, ending in `/report` |
-| `RECEIVER_TOKEN` | optional shared token (must match the receiver's `RECEIVER_TOKEN`) |
+| `RECEIVER_TOKEN` (or `REPORT_TOKEN`) | optional shared token (must match the receiver's `RECEIVER_TOKEN` env variable) |
 | `EMAIL_TO` | (bonus) address that receives the report |
 | `SMTP_USERNAME` / `SMTP_PASSWORD` | (bonus) SMTP login - for Gmail use an *App Password* |
 | `SMTP_HOST` / `SMTP_PORT` | optional, default `smtp.gmail.com` / `587` |
+
+Gmail App Password: turn on 2-Step Verification, then create one at
+<https://myaccount.google.com/apppasswords> and paste the 16-character code into `SMTP_PASSWORD`.
+
+GitHub Pages: Settings -> Pages -> Source = **GitHub Actions**.
+
+## Demonstration (pass -> fail -> fix)
+
+1. Start the receiver and the tunnel, check the `RECEIVER_URL` secret, then push. All jobs are green and
+   `receiver/test-report.json` shows `"overall_status": "PASSED"`.
+2. Introduce a defect, e.g. delete the registration-number check in `validation.py`, and push.
+   The **test** job fails, the report job still delivers `test-report.json` with `"FAILED"` and the
+   failure message, and **deploy** is skipped (the published Pages site stays unchanged).
+3. Restore the check and push again: everything is green and the JSON shows `PASSED`.
 
 ## 5. Report format (`test-report.json`)
 

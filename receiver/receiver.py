@@ -81,7 +81,7 @@ class ReportHandler(BaseHTTPRequestHandler):
 
         # 2) archive copy so every run (pass and fail) is kept for the demo
         self.archive_dir.mkdir(parents=True, exist_ok=True)
-        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        stamp = datetime.now().strftime("%Y%m%d-%H%M%S-%f")  # microseconds: no overwrite within a second
         sha = re.sub(r"[^0-9a-zA-Z]", "", str(report["commit_sha"]))[:7]
         status = re.sub(r"[^0-9a-zA-Z]", "", str(report["overall_status"])).lower()
         (self.archive_dir / ("%s_%s_%s.json" % (stamp, sha, status))).write_text(text, encoding="utf-8")
